@@ -22,7 +22,6 @@ import (
 	"sort"
 	"time"
 
-	apiv1 "example.com/m/v3/api/v1"
 	"github.com/robfig/cron"
 	kbatch "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -32,6 +31,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+
+	apiv1 "example.com/m/v3/api/v1"
 )
 
 // ClusterScanReconciler reconciles a ClusterScan object

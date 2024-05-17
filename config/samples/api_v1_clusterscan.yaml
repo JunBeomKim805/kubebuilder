@@ -1,14 +1,26 @@
 apiVersion: api.assignment.io/v1
 kind: ClusterScan
 metadata:
-  # labels:
-  #   app.kubernetes.io/name: clusterscan
-  #   app.kubernetes.io/instance: clusterscan-sample
-  #   app.kubernetes.io/part-of: homeassignment
-  #   app.kubernetes.io/managed-by: kustomize
-  #   app.kubernetes.io/created-by: homeassignment
+  labels:
+    app.kubernetes.io/name: clusterscan
+    app.kubernetes.io/instance: clusterscan-sample
+    app.kubernetes.io/part-of: homeassignment
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: homeassignment
   name: clusterscan-sample
 spec:
-  type: "foo"
-  setting: "default"
-  # TODO(user): Add fields here
+  schedule: "*/1 * * * *"
+  startingDeadlineSeconds: 60
+  concurrencyPolicy: Allow # explicitly specify, but Allow is also default.
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: hello
+              image: busybox
+              args:
+                - /bin/sh
+                - -c
+                - date; echo Hello from the Kubernetes cluster
+          restartPolicy: OnFailure
