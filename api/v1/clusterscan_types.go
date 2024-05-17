@@ -17,7 +17,21 @@ limitations under the License.
 package v1
 
 import (
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type ConcurrencyPolicy string
+
+const (
+	// AllowConcurrent allows CronJobs to run concurrently.
+	AllowConcurrent ConcurrencyPolicy = "Allow"
+	// ForbidConcurrent forbids concurrent runs, skipping next run if previous
+	// hasn't finished yet.
+	ForbidConcurrent ConcurrencyPolicy = "Forbid"
+	// ReplaceConcurrent cancels currently running job and replaces it with a new one.
+	ReplaceConcurrent ConcurrencyPolicy = "Replace"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -25,18 +39,19 @@ import (
 
 // ClusterScanSpec defines the desired state of ClusterScan
 type ClusterScanSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of ClusterScan. Edit clusterscan_types.go to remove/update
-	Type    string `json:"type"`
-	Setting string `json:"setting"`
+	Schedule                   string                  `json:"schedule"`
+	StartingDeadlineSeconds    *int64                  `json:"startingDeadlineSeconds,omitempty"`
+	ConcurrencyPolicy          ConcurrencyPolicy       `json:"concurrencyPolicy,omitempty"`
+	Suspend                    *bool                   `json:"suspend,omitempty"`
+	JobTemplate                batchv1.JobTemplateSpec `json:"jobTemplate"`
+	SuccessfulJobsHistoryLimit *int32                  `json:"successfulJobsHistoryLimit,omitempty"`
+	FailedJobsHistoryLimit     *int32                  `json:"failedJobsHistoryLimit,omitempty"`
 }
 
 // ClusterScanStatus defines the observed state of ClusterScan
 type ClusterScanStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Active           []corev1.ObjectReference `json:"active,omitempty"`
+	LastScheduleTime *metav1.Time             `json:"lastScheduleTime,omitempty"`
 }
 
 //+kubebuilder:object:root=true
